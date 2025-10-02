@@ -8,11 +8,10 @@ and debloats your system for a cleaner, faster experience.
 
 ---
 
-This software does get flagged but its a FP 
-but if you dont know what that is read this - https://www.huntress.com/cybersecurity-101/topic/false-positive-viruses
-<img width="1345" height="851" alt="Screenshot 2025-10-01 19-36-17" src="https://github.com/user-attachments/assets/567fd900-343d-4bad-825c-3789625a77be" />
-
+## Nuc does get flagged (false positive)
 ---
+
+<img width="1345" height="851" alt="Screenshot 2025-10-01 19-36-17" src="https://github.com/user-attachments/assets/567fd900-343d-4bad-825c-3789625a77be" />
 
 
 1. System Debloating
