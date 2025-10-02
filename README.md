@@ -6,8 +6,13 @@ Nuc is a lightweight Windows utility designed to improve system performance and 
 It performs a few simple registry tweaks, removes unnecessary built-in Windows apps, 
 and debloats your system for a cleaner, faster experience.
 
-Key Features
-------------
+---
+
+This software does get flagged but its a FP 
+<img width="1345" height="851" alt="Screenshot 2025-10-01 19-36-17" src="https://github.com/user-attachments/assets/567fd900-343d-4bad-825c-3789625a77be" />
+
+---
+
 
 1. System Debloating
    - Removes unused apps like Xbox, OneNote, Cortana, Photos, and more.
