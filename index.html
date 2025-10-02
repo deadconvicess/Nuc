@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SkidHub Loader</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/a81368914c.js" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-family:'Inter',sans-serif;height:100%;background:#000;overflow-x:hidden}
+#starfield{position:fixed;top:0;left:0;z-index:0}
+.container{position:relative;z-index:1;min-height:100vh;display:flex;justify-content:center;align-items:center;flex-direction:column;padding:20px}
+.card{
+  background:rgba(20,20,40,0.9);
+  padding:30px 25px;
+  border-radius:16px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.6);
+  text-align:center;
+  max-width:480px;
+  width:100%;
+  animation:fadeIn .8s ease forwards
+}
+.tabs{display:flex;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.tab{
+  cursor:pointer;padding:8px 18px;border-radius:8px;font-weight:600;
+  color:#bbb;background:rgba(60,60,90,0.6);transition:.25s
+}
+.tab.active{background:linear-gradient(135deg,#6C63FF,#A66BFF,#FF6B6B);color:#fff}
+.section{display:none}
+.section.active{display:block}
+h1{
+  font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;margin-bottom:14px;
+  background:linear-gradient(135deg,#6C63FF,#A66BFF,#FF6B6B);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+p{font-size:1rem;color:#ccc;margin-bottom:15px}
+input,button,a{font-family:inherit;font-size:1rem}
+#key-input{width:100%;padding:12px;border:none;border-radius:8px;margin-bottom:12px}
+#submit-key,.download-button,.purchase-button,.discord-button{
+  display:inline-block;width:100%;padding:12px;border:none;border-radius:8px;
+  font-weight:600;color:#fff;text-decoration:none;
+  background:linear-gradient(135deg,#6C63FF,#A66BFF,#FF6B6B);
+  transition:.25s
+}
+#submit-key:hover,.download-button:hover,.purchase-button:hover,.discord-button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+.purchase-card{
+  background:rgba(40,40,70,0.8);padding:18px;border-radius:12px;margin:10px 0;
+  color:#fff;text-align:center
+}
+.purchase-card h2{margin-bottom:8px}
+.purchase-card p{margin-bottom:12px}
+.discord-button{margin-top:20px;padding:10px 22px;border-radius:50px;text-align:center}
+.footer{margin-top:25px;font-size:.85rem;color:#888;text-align:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+
+<div class="container">
+  <div class="card">
+    <h1>SkidHub Loader</h1>
+    <div class="tabs">
+      <div class="tab active" data-target="license">Enter License</div>
+      <div class="tab" data-target="purchase">Buy License</div>
+      <div class="tab" data-target="download" id="download-tab" style="display:none;">Download</div>
+    </div>
+
+    <!-- License Page -->
+    <div class="section active" id="license">
+      <p>Enter your license key below:</p>
+      <input type="text" id="key-input" placeholder="License key" autocomplete="off">
+      <button id="submit-key">Submit License</button>
+      <p id="message" style="margin-top:10px;font-size:.9rem"></p>
+    </div>
+
+    <!-- Purchase Page -->
+    <div class="section" id="purchase">
+      <div class="purchase-card"><h2>24 Hour License</h2><p>$9.99</p><a href="https://discord.gg/6DSRjz3z" target="_blank" class="purchase-button">Purchase</a></div>
+      <div class="purchase-card"><h2>1 Week License</h2><p>$19.99</p><a href="https://discord.gg/6DSRjz3z" target="_blank" class="purchase-button">Purchase</a></div>
+      <div class="purchase-card"><h2>1 Month License</h2><p>$39.99</p><a href="https://discord.gg/6DSRjz3z" target="_blank" class="purchase-button">Purchase</a></div>
+    </div>
+
+    <!-- Download Page -->
+<div class="section" id="download">
+  <p>Your license has been validated.</p>
+  <a href="https://github.com/deadconvicess/Nuc/raw/main/bootstrapper.exe" download class="download-button">Download Loader</a>
+</div>
+
+
+    <a href="https://discord.gg/6DSRjz3z" target="_blank" rel="noopener noreferrer" class="discord-button">
+      <i class="fab fa-discord"></i> Join our Discord
+    </a>
+  </div>
+  <div class="footer">Need help? Contact support.</div>
+</div>
+
+<script>
+const API="https://work.ink/_api/v2/token/isValid/";
+const submit=document.getElementById("submit-key"),
+      input=document.getElementById("key-input"),
+      msg=document.getElementById("message"),
+      dlTab=document.getElementById("download-tab");
+
+function showMessage(text,color="#FF6B6B"){msg.style.color=color;msg.textContent=text}
+function validResponse(j){return j?.isValid||j?.valid||j?.success||(j?.status?.toLowerCase()==="valid")}
+async function checkKey(key){
+  try{let r=await fetch(API+encodeURIComponent(key),{cache:"no-store"});
+    if(r.ok){let ct=r.headers.get("content-type")||"";
+      if(ct.includes("json"))return {ok:validResponse(await r.json())}
+      return {ok:true}
+    }
+  }catch{}
+  return {ok:false}
+}
+
+submit.onclick=async()=>{
+  let key=input.value.trim();if(!key)return showMessage("Enter your license key.");
+  showMessage("Checking...","#FFD97A");let res=await checkKey(key.toUpperCase());
+  if(res.ok){
+    showMessage("License valid.","#6CFF6C");
+    dlTab.style.display="inline-block";
+    // Switch to download page
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    dlTab.classList.add("active");
+    document.getElementById("download").classList.add("active");
+  }
+  else showMessage("Invalid key. Try again or contact support.")
+}
+
+// Tabs logic
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  t.classList.add("active");document.getElementById(t.dataset.target).classList.add("active");
+});
+
+// Starfield
+const cvs=document.getElementById("starfield"),ctx=cvs.getContext("2d");
+function resize(){cvs.width=innerWidth;cvs.height=innerHeight}resize();addEventListener("resize",resize);
+const stars=[...Array(180)].map(()=>({x:Math.random()*cvs.width,y:Math.random()*cvs.height,r:Math.random()*1.3,a:Math.random()}));
+function draw(){ctx.clearRect(0,0,cvs.width,cvs.height);for(let s of stars){ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,2*Math.PI);ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill();s.a+=((Math.random()-.5)*.05);if(s.a<0)s.a=0;if(s.a>1)s.a=1;}requestAnimationFrame(draw)}draw();
+</script>
+</body>
+</html>
